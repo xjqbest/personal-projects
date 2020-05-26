@@ -1,2 +1,3 @@
 # personal-projects
-just for fun
+
+平时的积累记录在这里
