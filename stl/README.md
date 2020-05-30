@@ -83,3 +83,30 @@ inline void _Destroy(_Tp* __pointer) {
   __pointer->~_Tp();
 }
 ```
+
+
+vector reserve/resize的实现
+```cpp
+// 改变容器中可存储元素的个数 
+void resize(size_type __new_size, const _Tp& __x) {
+  if (__new_size < size()) 
+    erase(begin() + __new_size, end()); // 调用析构函数
+  else
+    insert(end(), __new_size - size(), __x);
+}
+
+// 预留存储空间，若 __n 大于当前的 capacity() ，则分配新存储，否则该方法不做任何事。
+void reserve(size_type __n) {
+  if (capacity() < __n) {
+    const size_type __old_size = size();
+    iterator __tmp = _M_allocate_and_copy(__n, _M_start, _M_finish);
+    destroy(_M_start, _M_finish);
+    _M_deallocate(_M_start, _M_end_of_storage - _M_start);
+    _M_start = __tmp;
+    _M_finish = __tmp + __old_size;
+    _M_end_of_storage = _M_start + __n;
+  }
+}
+```
+
+uninitialized_fill_n、uninitialized_copy 和 uninitialized_fill  调用的是placement new
