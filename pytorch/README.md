@@ -1,4 +1,4 @@
 
 ## DataLoader
 
-<img src="./images/dataloader.png" width="50%" height="50%">
+<img src="./images/dataloader.png" width="80%" height="80%">
