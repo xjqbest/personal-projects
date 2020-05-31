@@ -2,6 +2,7 @@
 
 ### fleet shuffle排查（效果）
 
+<img src="./images/shuffle.png" width="60%" height="60%">
 
 ### fleet 内存
 
