@@ -3,6 +3,8 @@
 
 [https://pytorch.org/docs/master/data.html](https://pytorch.org/docs/master/data.html)
 
+[https://zdaiot.com/MLFrameworks/Pytorch/Pytorch%20DataLoader%E8%AF%A6%E8%A7%A3/](https://zdaiot.com/MLFrameworks/Pytorch/Pytorch%20DataLoader%E8%AF%A6%E8%A7%A3/)
+
 [dataloader代码](https://github.com/pytorch/pytorch/blob/0b868b19063645afed59d6d49aff1e43d1665b88/torch/utils/data/dataloader.py)
 
 DataSet: 组织数据集。map-style 和 iterable-style。
