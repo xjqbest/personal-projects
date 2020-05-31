@@ -21,8 +21,32 @@ struct slot {
 
 // 一个样本，假如slot个数是408，那么就是
 std::vector<slot> sample(408);
+
+// sizeof(slot) = 72字节
+// 那么一条样本
 ```
-现在假设每条样本都是空的，一共100w个样本，由于每个样本
+
+现在假设每条样本都是空的，一共100w个样本。那么就是 100w * 72 * 408 / 1024 / 1024 / 1024 = 27.35G
+
+考虑到数据是稀疏格式，可以只用kv对存储slot:feasign格式的数据：
+
+```cpp
+union FeatureKey {
+  uint64_t uint64_feasign_;
+  float float_feasign_;
+};
+struct FeatureItem {
+...
+  char sign_[sizeof(FeatureKey)];
+  uint16_t slot_;
+};
+struct Record {
+  std::vector<FeatureItem> uint64_feasigns_;
+  std::vector<FeatureItem> float_feasigns_;
+}
+
+// sizeof(Record) = 48 远小于 408 * 72
+```
 
 ### fleet 速度优化
 
