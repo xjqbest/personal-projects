@@ -69,3 +69,18 @@ overlap：
 ### fleet dataset流程
 
 <img src="./images/dataset.png" width="70%" height="70%">
+
+
+### 异构
+
+我们考虑cpu、gpu、ssd这三种设备，结合大规模稀疏训练任务。
+
+大规模稀疏参数服务器训练任务的feasign量级都是千亿级别，模型大小可以占到4T，内存也有1.4T。组网比如是一个dnn网络。
+
+纯用cpu机器，可能需要上百台，而gpu的算力更强，可以考虑用gpu做计算。
+
+对于内存，我们也可以考虑使用ssd，将内存作为热点cache。
+
+当然cpu机器还是可以作为worker和server。server依然是作为一个kv存储和更新参数。而cpu worker可以负责下载解析数据和拉取稀疏参数。
+gpu worker负责大部分计算图（前向、反向）。对于dense参数而言，可以直接存在gpu worker的cpu内存和gpu显存里，
+cpu内存里的参数不断merge梯度+参数更新，周期性的与gpu参数同步。
