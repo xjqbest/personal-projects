@@ -84,3 +84,5 @@ overlap：
 当然cpu机器还是可以作为worker和server。server依然是作为一个kv存储和更新参数。而cpu worker可以负责下载解析数据和拉取稀疏参数。
 gpu worker负责大部分计算图（前向、反向）。对于dense参数而言，可以直接存在gpu worker的cpu内存和gpu显存里，
 cpu内存里的参数不断merge梯度+参数更新，周期性的与gpu参数同步。
+
+gpu机器一般是百G带宽，cpu机器一般是十G带宽。可以只用几台gpu机器 + 十几台cpu机器，就可以完成原先上百台cpu才能做的训练任务。
