@@ -23,7 +23,7 @@ struct slot {
 std::vector<slot> sample(408);
 
 // sizeof(slot) = 72字节
-// 那么一条样本
+// 那么一条样本字节数为 408 * 72
 ```
 
 现在假设每条样本都是空的，一共100w个样本。那么就是 100w * 72 * 408 / 1024 / 1024 / 1024 = 27.35G
@@ -50,6 +50,21 @@ struct Record {
 
 ### fleet 速度优化
 
+考虑通信、overlap、网络结构本身：
+
+通信
+ - rpc长尾优化：线程数较多时，不仅调度开销较大，有些线程也可能迟迟未被调度。（bthread）
+
+overlap：
+ - pull sparse为同步，可以改为流水线式。 或者对于同一个epoch的多个阶段，不同阶段overlap
+ - 数据preload
+ - 训练线程均分数据
+
+网络结构本身：
+ - 多个阶段合并，共享bottom
+ - 及时的stop gradient
+ - 减少op数
+ 
 
 ### fleet dataset流程
 
