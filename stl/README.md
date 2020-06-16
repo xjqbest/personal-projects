@@ -110,3 +110,9 @@ void reserve(size_type __n) {
 ```
 
 uninitialized_fill_n、uninitialized_copy 和 uninitialized_fill  调用的是placement new
+
+uninitialized_copy(InputIt first, InputIt last, ForwardIt d_first): 复制来自范围 \[first, last) 的元素到始于 d_first 的未初始化内存。
+
+uninitialized_fill(ForwardIt first, ForwardIt last, const T& value): 复制给定的 value 到以 \[first, last) 定义的未初始化内存区域。
+
+uninitialized_fill_n(ForwardIt first, Size count, const T& value): 从 first 起始，将 value 的值复制 count 个。
