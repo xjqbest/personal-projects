@@ -2,7 +2,8 @@
 #### 面试问题
 
 - 机器学习／深度学习框架的演进
-- 相关竞品调研（xdl、byteps、）
+- 相关竞品调研（xdl、byteps）
+- elf/hippo/paddle fleet整体介绍
 
 #### 编程题
 
