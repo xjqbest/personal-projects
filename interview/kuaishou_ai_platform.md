@@ -66,7 +66,14 @@ class HashDict {
   // 如果 key 不在词典中, 则把它加入词典, 并返回给它分配的 id
   int InsertKey(uint64 key) {
     // NOTE(填写程序): 完成插入操作
-
+    int* id_ptr = &(hash_table_[key % Capacity()]);
+    while(*id_ptr >= 0) {
+        if (keys_[*id_ptr] == key) return *id_ptr;
+        id_ptr = &(next_[*id_ptr]);
+    }
+    keys_[total] = key;
+    *id_ptr = total;
+    return total++;
   }
   // 如果 key 已经存在于词典中, 返回它的 id, 否则返回 -1
   int LookupKey(uint64 key) const {
