@@ -11,3 +11,23 @@
 #### 编程题
 
  - 给定一个整数数组，返回最长递增子数组的长度。（动态规划）
+
+```cpp
+// f[n] = max_{0}_{n - 1}(f[i] + 1, if array[n] > array[i])
+int get_max(const vector<int>& array) {
+    if(array.size() <= 1) {
+        return array.size();
+    }
+    vector<int> f(array.size(), 1);
+    int ans = 1;
+    for(int i = 1; i < array.size(); ++i) {
+        for(int j = 0; j < i; ++j) {
+            if (array[j] < array[i]) {
+                f[i] = max(f[i], f[j] + 1);
+                ans = max(ans, f[i]);
+            }
+        }
+    }
+    return ans;
+}
+```
