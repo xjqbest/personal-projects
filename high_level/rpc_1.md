@@ -61,7 +61,7 @@ brpc支持以下连接方式：
  |长连接	|否|	是	|是|
  |server端连接数(单client)|	qps\*latency (原理见[little's law](https://en.wikipedia.org/wiki/Little%27s_law))|	qps\*latency	|1|
  |极限qps	|差，且受限于单机端口数|	中等	|高|
- |latency	1.5RTT(connect) + 1RTT + 处理时间|	1RTT + 处理时间|	1RTT + 处理时间|
+ |latency	| 1.5RTT(connect) + 1RTT + 处理时间|	1RTT + 处理时间|	1RTT + 处理时间|
  |cpu占用	|高, 每次都要tcp connect|	中等, 每个请求都要一次sys write|	低, 合并写出在大流量时减少cpu占用|
 
 #### Cacheline
@@ -131,4 +131,5 @@ if (ready.load(std::memory_order_acquire)) {
  - blocking IO: 发起IO操作后阻塞当前线程直到IO结束，标准的同步IO，如默认行为的posix read和write。
  - non-blocking IO: 发起IO操作后不阻塞，用户可阻塞等待多个IO操作同时结束。non-blocking也是一种同步IO：“批量的同步”。如linux下的poll,select, [epoll](https://blog.csdn.net/songchuwang1868/article/details/89877739)，BSD下的kqueue。
  - asynchronous IO: 发起IO操作后不阻塞，用户得递一个回调待IO结束后被调用。如windows下的OVERLAPPED + IOCP。linux的native AIO只对文件有效。
+
 linux一般使用non-blocking IO提高IO并发度。当IO并发度很低时，non-blocking IO不一定比blocking IO更高效，因为后者完全由内核负责，而read/write这类系统调用已高度优化，效率显然高于一般得多个线程协作的non-blocking IO。但当IO并发度愈发提高时，blocking IO阻塞一个线程的弊端便显露出来：内核得不停地在线程间切换才能完成有效的工作，一个cpu core上可能只做了一点点事情，就马上又换成了另一个线程，cpu cache没得到充分利用，另外大量的线程会使得依赖thread-local加速的代码性能明显下降，如tcmalloc，一旦malloc变慢，程序整体性能往往也会随之下降。而non-blocking IO一般由少量event dispatching线程和一些运行用户逻辑的worker线程组成，这些线程往往会被复用（换句话说调度工作转移到了用户态），event dispatching和worker可以同时在不同的核运行（流水线化），内核不用频繁的切换就能完成有效的工作。线程总量也不用很多，所以对thread-local的使用也比较充分。这时候non-blocking IO就往往比blocking IO快了。不过non-blocking IO也有自己的问题，它需要调用更多系统调用，比如epoll_ctl，由于epoll实现为一棵红黑树，epoll_ctl并不是一个很快的操作，特别在多核环境下，依赖epoll_ctl的实现往往会面临棘手的扩展性问题。non-blocking需要更大的缓冲，否则就会触发更多的事件而影响效率。non-blocking还得解决不少多线程问题，代码比blocking复杂很多。
