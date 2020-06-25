@@ -25,6 +25,11 @@ else
 bool atomic_compare_exchange_weak（volatile A * obj，C * expected，C desired);
 ```
 
+lockfree优缺点：
+
+ - 优点：不发生死锁。性能通常比lock好一些。
+ - 缺点：仍然是锁（只是将锁限制在一个最小的范围内，通常是一个原子操作）。所以并不能随cpu个数增加而获得呈线性scale的性能提升。
+
 ```cpp
 template<typename T>
 class LockFreeStack {
