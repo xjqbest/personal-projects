@@ -21,6 +21,11 @@ else
 ```
 
 ```cpp
+// 将obj所指向的值与expected所指向的值进行原子比较，如果相等，则把*desired赋值给*obj。否则，把*obj赋值给*expected。
+bool atomic_compare_exchange_weak（volatile A * obj，C * expected，C desired);
+```
+
+```cpp
 template<typename T>
 class LockFreeStack {
  public:
