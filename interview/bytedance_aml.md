@@ -7,6 +7,7 @@
  
  <img src="./images/1.png" width="80%" height="80%">
 
+以及counting bloom filter，统计映射到某k个位置的数量。insert时候++，delete时候--
 
 #### 编程题
 
