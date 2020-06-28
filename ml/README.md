@@ -15,3 +15,49 @@ Hippo：容错、动态扩缩容。提供了通用的参数服务器。有调度
 ### 学习率与batch size
 
 [https://www.cnblogs.com/yumoye/p/11055813.html](https://www.cnblogs.com/yumoye/p/11055813.html)
+
+
+### aibox
+
+[论文地址](https://xujiaqi.org/docs/learn_gpu/paddlebox-Paper.pdf)
+
+
+<img src="./images/1.png" width="80%" height="80%">
+
+<img src="./images/2.png" width="80%" height="80%">
+
+先不考虑流水线，流程如下：
+ - 训练的batch（对应一个delta的数据，比如10min），从hdfs上读取。训练采用数据并行，每个节点读自己的数据切片。
+ - 每个节点从本地的 MEM-PS/SSD-PS和其他节点的MEM-PS拉取batch对应的参数。（本地的MEM-PS会load本地的SSD-PS参数，并请求其他节点的参数）
+ - load到MEM-PS之后，会把参数切分到GPU上。（一个参数只会存在于一个GPU上）训练的时候，训练线程通过NVLink直接请求GPU上的参数。
+ - 训练是以mini-batch的形式。为了消除dense参数的staleness的问题，每训完一个batch，GPU之间参数会做一次同步。
+ - 训练完一个batch后，MEM-PS取出HBM-PS上的更新后的参数，并把低频的参数dump回SSD-PS
+ 
+<img src="./images/4.png" width="80%" height="80%"> 
+
+HBM-PS、MEM-PS、SSD-PS是层次的关系，上层相当于是下层的cache。
+ - HBM-PS：worker直接与GPU通信，训练吞吐可以显著提高，因为不经过cpu内存。由于HBM容量通常很小，而参数规模很大，层次化的架构可以解决这个问题。
+ - MEM-PS：worker计算完前向反向后，MEM-PS取出HBM-PS上的更新后的参数，并把低频的参数dump回SSD-PS，保留高频的参数，可以减少SSD的IO。
+ - SSD-PS：SSD的连续读写比随机读写性能更好，因此MEM-PS是按batch把所有参数写到文件里。由后台的compaction线程merge文件。
+ 
+4-stage pipeline：
+ - （1） data transfer：network
+ - （2） parameter partition：CPU
+ - （3） data loading/dumping：SSD
+ - （4） neural network training：GPU
+ 
+<img src="./images/5.png" width="80%" height="80%"> 
+
+GPU之间参数同步，这里只有四个节点：
+ - 相邻节点之间同步（step=1）
+ - step=2的节点直接同步
+ - GPU内多卡做all reduce
+
+<img src="./images/3.png" width="80%" height="80%">
+
+
+GPU参数更新：
+<img src="./images/6.png" width="80%" height="80%">
+
+SSD参数更新，顺序写入文件，后台线程定期更新
+<img src="./images/7.png" width="80%" height="80%">
