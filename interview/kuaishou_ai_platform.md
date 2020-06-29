@@ -9,6 +9,7 @@
 
  - [二叉树中的最大路径和](https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/)
  - [判断一棵满二叉树是否为二叉搜索树](https://www.nowcoder.com/questionTerminal/76fb9757332c467d933418f4adf5c73d)
+ - 快排
  
  ```cpp
 #include <iostream>
