@@ -1,7 +1,43 @@
 
+5个基本概念：
+ - env
+ - state
+ - reward
+ - agent
+ - policy
+
+
+工程实现的几个组成部分：
+ - env：环境
+ - actor：负责agent与环境交互，得到reward和新的state
+ - learner：负责更新policy的参数
+ - policy：决定了agent要采取什么action
+
 几种并行方式：
- - 环境并行
- - actor并行
- - learner并行
+ - actor并行：多个actor跟环境交互
+ - learner并行：多个learner训练更新参数
 
 架构演进：DQN -> GORILA -> A3C -> Ape-x -> IMPALA
+
+### DQN
+
+![image](https://user-images.githubusercontent.com/12492564/149626533-35d78385-fa08-40b7-93e3-95d6dd8df0c1.png)
+
+支持actor并行。
+
+引入ps后，可以支持learner并行，也就是多个learner并行训练push梯度然后同步参数。这种方式下，actor和learner在同一个节点。
+
+![image](https://user-images.githubusercontent.com/12492564/149627427-a3ba0f77-e59e-4090-a43c-362290d8f7fa.png)
+
+### GORILA
+
+![image](https://user-images.githubusercontent.com/12492564/149627797-84abc9c3-3f17-4d9b-b81d-530ae94392b2.png)
+
+
+特点：
+ - 多个actor跟环境交互产生样本放到replay memory（actor与learner之间提供和接收样本）。
+ - 使用ps保存更新参数，多个learner并行训练push梯度然后同步参数。
+ - actor和learner中的参数与ps同步：Q网络每次action前同步，target Q网络定期同步。
+ - bundled mode：也就是最简单的方式，是每个actor-learner-replay memory作为一组绑定起来。
+ - 稳定性：参数保存version避免参数版本过于旧；检查梯度，如果其loss过大则舍弃。
+
