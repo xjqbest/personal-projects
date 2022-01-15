@@ -35,7 +35,7 @@
 
 
 特点：
- - 多个actor跟环境交互产生样本放到replay memory（actor与learner之间提供和接收样本）。
+ - 多个actor跟环境交互产生样本放到replay memory（actor与learner之间提供和接收样本，有local和global两种方式）。
  - 使用ps保存更新参数，多个learner并行训练push梯度然后同步参数。
  - actor和learner中的参数与ps同步：Q网络每次action前同步，target Q网络定期同步。
  - bundled mode：也就是最简单的方式，是每个actor-learner-replay memory作为一组绑定起来。
