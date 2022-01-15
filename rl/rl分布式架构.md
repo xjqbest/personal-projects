@@ -41,3 +41,10 @@
  - bundled mode：也就是最简单的方式，是每个actor-learner-replay memory作为一组绑定起来。
  - 稳定性：参数保存version避免参数版本过于旧；检查梯度，如果其loss过大则舍弃。
 
+算法流程如下：
+
+![image](https://user-images.githubusercontent.com/12492564/149628373-1ca1fb92-3eeb-406f-8d9b-3eea32812c00.png)
+
+一个例子如下：
+
+![image](https://user-images.githubusercontent.com/12492564/149628441-4e333865-50d2-41a8-a268-b630501bfe4c.png)
