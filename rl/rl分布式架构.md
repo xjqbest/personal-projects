@@ -34,7 +34,9 @@
 
 （4）同步 or 异步：如果on-policy采用异步，就相当于样本变成了off-policy，可以通过importance sampling作修正。
 
-（5）异步带来的效果问题：
+（5）单机 or 多机：单机可以省去通信。还有就是看扩展性，比如多个learner、或者采用ps。
+
+（6）异步带来的效果问题：
  - 稳定性：参数加版本，过滤异常梯度。
  - importance sampling：解决actor使用旧策略产出样本的问题，对其作修正。
 
