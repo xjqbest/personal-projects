@@ -19,6 +19,15 @@
 
 架构演进：DQN -> GORILA -> A3C -> Ape-x -> IMPALA
 
+看来看去，基本都是大同小异，总结一下：
+
+（1）是否需要ps：基本都需要，只不过单机多线程时候不叫ps罢了
+
+（2）并行：
+- actor可以仅仅做跟环境交互采样，然后把样本直接发给learner（on-policy） 或者 放到replay memory（off-policy）
+- actor可以做训练，也就是跟learner放到一起，训练得到的梯度就可以发给ps来更新。
+- actor 
+
 ### DQN
 
 ![image](https://user-images.githubusercontent.com/12492564/149626533-35d78385-fa08-40b7-93e3-95d6dd8df0c1.png)
