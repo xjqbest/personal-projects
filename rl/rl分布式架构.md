@@ -21,12 +21,22 @@
 
 看来看去，基本都是大同小异，总结一下：
 
-（1）是否需要ps：基本都需要，只不过单机多线程时候不叫ps罢了
+（1）是否需要ps：不需要的时候，参数在多个learner之间可能需要通过allreduce平均。
 
 （2）并行：
-- actor可以仅仅做跟环境交互采样，然后把样本直接发给learner（on-policy） 或者 放到replay memory（off-policy）
+- actor可以仅仅做跟环境交互采样，然后把样本直接发给learner（on-policy） 或者 放到replay memory（off-policy）然后由learner训练。
 - actor可以做训练，也就是跟learner放到一起，训练得到的梯度就可以发给ps来更新。
-- actor 
+- actor与learner之间，可以是一对多，可以是多对多。learner之间可以有通信，actor通常是相互独立的。
+
+（3）cpu or gpu：
+ - on-policy 一般使用cpu训练，因为每次训练的batch小。off-policy与之相反。
+ - on-policy也可以使用gpu训练，那就需要每次将多个actor的样本攒起来训练一次（cpu采样 -> gpu前向+gpu反向，cpu采样+cpu前向 -> gpu反向）。
+
+（4）同步 or 异步：如果on-policy采用异步，就相当于样本变成了off-policy，可以通过importance sampling作修正。
+
+（5）异步带来的效果问题：
+ - 稳定性：参数加版本，过滤异常梯度。
+ - importance sampling：解决actor使用旧策略产出样本的问题，对其作修正。
 
 ### DQN
 
@@ -64,7 +74,7 @@
 
 A3C采用actor-critic算法框架，特点是：
  - on-policy：没有replay memory。
- - 与gorila不同，没单机多线程训练（hogwild）。
+ - 与gorila不同，是单机多线程训练（hogwild）。
  - 每个worker包含一个actor、learner、local buffer，每个worker都独立地进行环境交互与模型训练。每个worker将梯度传给一个global network，然后这个global network会取平均更新模型。更新完模型再把这个模型参数传给所有的worker。
 
 算法流程如下：
