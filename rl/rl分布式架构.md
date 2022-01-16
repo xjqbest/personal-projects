@@ -48,3 +48,18 @@
 一个例子如下：
 
 ![image](https://user-images.githubusercontent.com/12492564/149628441-4e333865-50d2-41a8-a268-b630501bfe4c.png)
+
+# A3C
+
+![image](https://user-images.githubusercontent.com/12492564/149652662-3dfb8941-8161-464c-92e6-ad69e10eb01b.png)
+
+A3C采用actor-critic算法框架，特点是：
+ - on-policy：没有replay memory。
+ - 与gorila不同，没单机多线程训练（hogwild）。
+ - 每个worker包含一个actor、learner、local buffer，每个worker都独立地进行环境交互与模型训练。每个worker将梯度传给一个global network，然后这个global network会取平均更新模型。更新完模型再把这个模型参数传给所有的worker。
+
+算法流程如下：
+
+![image](https://user-images.githubusercontent.com/12492564/149653084-0ab84e8c-9c47-4c10-b8a8-3fd3a2d3118c.png)
+
+
