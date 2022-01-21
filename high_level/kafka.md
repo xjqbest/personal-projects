@@ -49,3 +49,5 @@ group：可扩展且具有容错性的消费者机制。将消费者分组，一
 提高吞吐：增大max.partition.fetch.bytes、增大fetch.max.bytes、增大fetch.max.bytes。
 
 提高并发：增大partition数、增大消费者数量。
+
+稳定性：模型中额外保存每个partition的offset。
