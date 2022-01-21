@@ -41,4 +41,11 @@ group：可扩展且具有容错性的消费者机制。将消费者分组，一
 
  - 顺序读写：每个partition是一个文件，收到消息插入到文件末尾。每个partition还有offset表示消费到哪里。
  - 零拷贝：利用sendfile，数据不会经过用户空间，减少了数据复制，还减少了上下文切换的次数。（[参考](https://www.cnblogs.com/zlcxbb/p/6411568.html)）
- - 分区：每个topic分成多个partition，partition内存可以再分段。
+ - 分区：每个topic分成多个partition，partition内可以再分段。
+ - 批量读写：kafka数据读写批量的而不是单条的
+
+### 流式训练的优化
+
+提高吞吐：增大max.partition.fetch.bytes、增大fetch.max.bytes、增大fetch.max.bytes。
+
+提高并发：增大partition数、增大消费者数量。
