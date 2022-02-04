@@ -42,6 +42,8 @@
  - `蒙特卡罗`（MC）：让 agent 跟环境进行交互，就会得到很多轨迹。每个轨迹都有对应的 reward，每个轨迹的 reward 进行平均，就可以知道某一个策略下面的状态的价值。（采样的方法）
  - `时序差分`（TD）：每往前走一步，就用得到的估计回报来更新上一步值。（采样的方法 + bootstrapping）
 
+![image](https://user-images.githubusercontent.com/12492564/152501128-9f218d1d-1f17-490f-a746-0990e102d658.png)
+
 ![image](https://user-images.githubusercontent.com/12492564/152499338-14766e66-815e-4954-ba61-70617f6533fe.png)
 
 ![image](https://user-images.githubusercontent.com/12492564/152499500-9ff18ab7-e308-4144-82c7-bd9cf8a6f23d.png)
