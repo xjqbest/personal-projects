@@ -103,8 +103,8 @@ class DQN:
         if self._replay_buffer.size() < self._batch_size:
             return
         state_batch, action_batch, reward_batch, next_state_batch, done_batch = self._replay_buffer.sample()
-        q_batch = self._policy_net.predict(state_batch)#(np.asarray(state_batch).astype('float32'))
-        q_next_batch = self._target_net.predict(next_state_batch)#(np.asarray(next_state_batch).astype('float32'))
+        q_batch = self._policy_net.predict(state_batch)
+        q_next_batch = self._target_net.predict(next_state_batch)
 
         for i in range(self._batch_size):
             a = action_batch[i]
