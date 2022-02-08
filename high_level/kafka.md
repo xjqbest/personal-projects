@@ -1,5 +1,7 @@
 
+### 简要介绍什么是kafka
 
+kafka：基于发布订阅模式的分布式消息处理系统，并且消息基于日志持久化可以反复读取，并且具有高吞吐、多副本的特点。
 
 ### producer、consumer、broker、partition、group
 
