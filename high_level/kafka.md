@@ -5,11 +5,13 @@ kafka：基于发布订阅模式的分布式消息处理系统，并且消息基
 
 ### producer、consumer、broker、partition、group
 
-broker：kafka 集群中，一个kafka实例被称为一个代理(Broker)节点。
+broker：kafka 集群中，一个kafka实例被称为一个代理(Broker)节点。（一台 kafka 服务器就是一个 broker。一个集群由多个 broker 组成。）
 
-roducer：是消息生产者，向 kafka broker 发消息。
+producer：是消息生产者，向 kafka broker 发消息。
 
 consumer：是消息消费者，向 kafka broker 取消息。
+
+topic：可以理解为一个消息队列。
 
 partition：每一个 topic 可以有一个或者多个分区(partition)。partition 中的每条消息都会被分配一个有序的id（offset），
 消费时kafka 只保证按一个 partition 中的消息的顺序，不保证多个 partition 间的顺序。每个partition在同一时间只被一个 consumer 消费。
