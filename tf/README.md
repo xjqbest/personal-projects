@@ -2,15 +2,17 @@
 
 ## tf.data
 
-[https://www.tensorflow.org/guide/data_performance](https://www.tensorflow.org/guide/data_performance)
+[https://tensorflow.google.cn/guide/data_performance](https://tensorflow.google.cn/guide/data_performance)
 
 数据读取和解析实现在c++端。
 
 优化如下：
  - prefetch: 数据预加载。（使用了pipeline的方式）
- - interleave: 并行预处理数据。（IO并行）
- - map：
- - cache: 把数据cache在内存
+ - interleave + num_parallel_calls: 并行extract数据。（IO并行）
+ - map + num_parallel_calls：并行transform数据。
+ - fusion：多个dataset融合成一个。（map+batch，map+filter等）。
+ - cache: 把数据cache在内存，多个epoch复用。
+ - Vectorized（向量化）：map前先batch。
 
 
 
