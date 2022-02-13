@@ -98,6 +98,20 @@ StreamExecutor框架由三个层次组成，从上到下依次为Platform层（�
 <img width="802" alt="image" src="https://user-images.githubusercontent.com/12492564/153756981-74e60fea-1d49-41be-adec-da043e9197ea.png">
 
 
+### Placement
 
+Soft Placement机制：如果某个Node被显示指定精确放在某Device上，但系统中却没有该Device上的实现版本，那么为了保证程序可用，Soft Placement将发挥作用，它将忽略device type，在系统中按照Device优先级选取另一个可用的实现版本重新改写Placement。
 
+三类特殊的Op类型，对他们可以做一些特殊处理：
+ - Generator类Op：入度为0，出度为1的Op。
+ - MetaData类Op：直接在Tensor的元数据MetaData上操作，不改变Tensor本身的内容，比如Reshape）。
+ - Ref类或Resource类：例如Variable这种可能发生赋值的Op（或者叫左值）。比如Variable，对其assign等操作肯定直接在Variable所在之地执行即可。
 
+Placer是TensorFlow中Placement相关的类。它在尽可能满足用户诉求的前提下，暗中纠正部分不合理的Placement：
+ - 规则A：若某个Node是GeneratorNode，将其与Consumer与其放在同一个Device上可以防止无意义的跨Device拷贝。
+ - 规则B：若某个Node是MetaDataNode，将其与Producer放在相同的Device上也可以防止无意义的跨Device拷贝。
+ - 规则C：若某个Node的输入是Reference type或者是Reource type，那么尽量将其与输入放在同一个Colocation Group中。
+
+Find-Union算法：并查集算法，Placer内最重要的算法。TensorFlow通过Find-Union算法高效地处理了Node的Colocation（打印GraphDef里面node的属性“loc:@xxxx”）问题。简单而言，逻辑上，多个具有相同Colocation Group的Node应该被“并”到同一个组中，从而“查”某个Node的Placement信息时，可以更快速地获取整组的信息。
+
+<img width="731" alt="image" src="https://user-images.githubusercontent.com/12492564/153758859-af99aa67-67d3-40a4-9830-2241b4f726ef.png">
