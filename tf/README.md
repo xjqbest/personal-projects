@@ -78,3 +78,26 @@ bins有三个操作：
  - insert：将一个空闲的chunk插入到一个bin所挂载的chunk链表中，同时需要维持chunk链表的升序关系。具体流程是直接将chunk插入到index = chunk size /256 >>2的那个bin中即可。
  - delete：将一个空闲的chunk从bins中移除。
 
+### StreamExecutor
+
+对一种并行编程模型的封装。
+
+Stream：处于同一个Stream的操作必须按顺序执行，不同Stream之间的并无顺序关系。
+
+StreamExecutor框架由三个层次组成，从上到下依次为Platform层（平台描述）、StreamExecutor Core层（执行引擎）和LibrarySupport层（基础库）：
+ - Platform：指的是计算所使用设备平台的抽象，每种Device对应一种Platform。比如GPU对应的是CudaPlatform，而CPU对应的是HostPlatform等。
+ - StreamExecutor Core：该层只向上层暴露StreamExecutor类，而涉及到具体实现的StreamExecutorInterface以及各种具体的实现将由StreamExecutor类统一控制。
+ - Library：这一层提供的是各种底层加速库的接入（比如CuDNN、Eigen、mkl、CuBLAS）。Library层将这些基础库统一作为插件（Plugin）来管理。他们通过PluginRegister模块注册。
+
+类图：
+
+<img width="805" alt="image" src="https://user-images.githubusercontent.com/12492564/153757001-ca8c8dc0-25d2-4652-9fa2-a56ecfd489e2.png">
+
+从op出发，一次调用：
+
+<img width="802" alt="image" src="https://user-images.githubusercontent.com/12492564/153756981-74e60fea-1d49-41be-adec-da043e9197ea.png">
+
+
+
+
+
