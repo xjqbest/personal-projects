@@ -123,3 +123,29 @@ Find-Union算法：并查集算法，Placer内最重要的算法。TensorFlow通
 <img width="798" alt="image" src="https://user-images.githubusercontent.com/12492564/153760625-1d36ba1f-f16f-4e25-beb9-9d9407968dc9.png">
 
 <img width="824" alt="image" src="https://user-images.githubusercontent.com/12492564/153760648-fd232e3f-4971-48e3-8995-9b3831c9b68a.png">
+
+### 通信模块 Rendezvous
+
+ParsedKey：消息传输的唯一标识符。在多组消息同时发送接收时，需要对每一对Send和Recv梳理一个对应关系，即Send端发送的消息与Recv端接收的消息不能有错位。只要让某个消息在被Send前加上一个唯一标识符，而Recv在接收消息前也能够按照某种规则拼出一样的唯一标识符，这个对应关系就解决了。
+
+Table：消息队列的缓存。
+
+（1）本地通信
+
+<img width="665" alt="image" src="https://user-images.githubusercontent.com/12492564/153767377-882f69fa-4304-45e6-82b2-8c5011c95286.png">
+
+value就是参与通信tensor本体。waitor是在确认tensor被接收端完成接收后的处理函数，也就是consumer处理该tensor的函数过程。
+
+<img width="730" alt="image" src="https://user-images.githubusercontent.com/12492564/153767398-f8357be1-1e2e-4a69-b616-21ea9e453efa.png">
+
+Send过程作为Tensor的生产者，它负责将待发送的Tensor送入Table中，并将ParsedKey作为该Item的键。而Recv过程作为消费者，它也会根据自己所需拼出相同的ParsedKey，然后从Table中查看是否已经存在该项。在Send和RecvAsync顺序相对异步的情况下，waitor函数的执行时机只有两种情况，它取决于Send的供给和RecvAsync的需求哪一个先到达。若生产者先到达，那么waiter函数的调用由RecvAsync执行。若消费者的需求先到达，那么waiter函数的调用由Send执行。
+
+（2）跨进程通信
+
+Send方——将Ready的Tensor挂入本地Table。（本地Tensor处于Ready状态后就被放挂了本地Worker的Table中，至此Send过程就全部完成了）
+
+<img width="634" alt="image" src="https://user-images.githubusercontent.com/12492564/153767480-703053dc-d273-4687-8fc5-eeac8bb01bd2.png">
+
+Recv方——向Send方主动发出请求，触发通信过程（主动的拉数据）。Recv方是Tensor的接收方，它的处理过程是：将所需要的Tensor对应的ParsedKey拼出后，主动向Send方主动发出Request，Send方在接收到Request后立即在本地Table中查找方所需要的Tensor，找到后将Tensor封装成Response发送回Recv方。
+
+<img width="804" alt="image" src="https://user-images.githubusercontent.com/12492564/153767495-2d3951c5-a089-41e1-b295-30da100f2318.png">
