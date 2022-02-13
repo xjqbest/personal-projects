@@ -115,3 +115,11 @@ Placer是TensorFlow中Placement相关的类。它在尽可能满足用户诉求�
 Find-Union算法：并查集算法，Placer内最重要的算法。TensorFlow通过Find-Union算法高效地处理了Node的Colocation（打印GraphDef里面node的属性“loc:@xxxx”）问题。简单而言，逻辑上，多个具有相同Colocation Group的Node应该被“并”到同一个组中，从而“查”某个Node的Placement信息时，可以更快速地获取整组的信息。
 
 <img width="731" alt="image" src="https://user-images.githubusercontent.com/12492564/153758859-af99aa67-67d3-40a4-9830-2241b4f726ef.png">
+
+### session
+
+两种线程数：
+
+<img width="798" alt="image" src="https://user-images.githubusercontent.com/12492564/153760625-1d36ba1f-f16f-4e25-beb9-9d9407968dc9.png">
+
+<img width="824" alt="image" src="https://user-images.githubusercontent.com/12492564/153760648-fd232e3f-4971-48e3-8995-9b3831c9b68a.png">
