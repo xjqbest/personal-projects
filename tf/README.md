@@ -48,3 +48,6 @@ dataset = dataset.interleave(lambda x:
     tf.data.TextLineDataset(x).map(parse_fn, num_parallel_calls=1),
     cycle_length=4, block_length=16)
 ```
+
+
+<img width="1120" alt="image" src="https://user-images.githubusercontent.com/12492564/153747212-d1e21fee-a956-4ec8-af62-d86cb7032842.png">
