@@ -84,3 +84,11 @@ A3C采用actor-critic算法框架，特点是：
 ![image](https://user-images.githubusercontent.com/12492564/149653084-0ab84e8c-9c47-4c10-b8a8-3fd3a2d3118c.png)
 
 
+### G-A3C
+
+<img width="1072" alt="image" src="https://user-images.githubusercontent.com/12492564/153919189-56222d0b-845a-41af-9ed2-9170bdb23d23.png">
+
+CPU只负责环境交互、GPU负责网络推理/学习，这是一个非常合理的资源分配，为大规模强化学习提供了可能性。模型网络只有一套，存储在GPU上。
+
+不同环境的Agent产生的交互数据先放到一个Training Queue里，由Trainer先batch一下然后送到GPU去训练。与此同时，每个环境中的Agent要采取什么策略的输出请求也要先排在一个Prediction Queue里等待着由Predictor batch一下然后送到GPU去预测。可以看出当前预测采用的参数可能还是没来及更新的，有一定的延迟，不是严格的on-policy。
+
