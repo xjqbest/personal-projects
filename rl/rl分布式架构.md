@@ -75,7 +75,7 @@
 ![image](https://user-images.githubusercontent.com/12492564/149652662-3dfb8941-8161-464c-92e6-ad69e10eb01b.png)
 
 A3C采用actor-critic算法框架，特点是：
- - on-policy：没有replay memory。
+ - on-policy：没有replay memory。（也就是说引入很多的并行的agent同时与环境交互，可以达到跟replay memory一样的效果）
  - 与gorila不同，是单机多线程训练（hogwild）。
  - 每个worker包含一个actor、learner、local buffer，每个worker都独立地进行环境交互与模型训练。每个worker将梯度传给一个global network，然后这个global network会取平均更新模型。更新完模型再把这个模型参数传给所有的worker。
 
