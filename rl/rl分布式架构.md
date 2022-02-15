@@ -92,3 +92,37 @@ CPU只负责环境交互、GPU负责网络推理/学习，这是一个非常合�
 
 不同环境的Agent产生的交互数据先放到一个Training Queue里，由Trainer先batch一下然后送到GPU去训练。与此同时，每个环境中的Agent要采取什么策略的输出请求也要先排在一个Prediction Queue里等待着由Predictor batch一下然后送到GPU去预测。可以看出当前预测采用的参数可能还是没来及更新的，有一定的延迟，不是严格的on-policy。
 
+### DPPO
+
+PPO（Proximal Policy Optimization）：是 policy gradient 的一个变形，通过重要性采样的方法，将on-policy转为off-policy。
+
+policy gradient 是一个会花很多时间来采样数据的算法，大多数时间都在采样数据，agent 去跟环境做互动以后，接下来就要更新参数。你只能更新参数一次。接下来你就要重新再去收集数据， 然后才能再次更新参数。这显然是非常花时间的，所以我们想要从 on-policy 变成 off-policy。 这样做就可以用另外一个 policy， 另外一个 actor θ′ 去跟环境做互动(θ′被固定了)。用θ′收集到的数据去训练θ。
+
+KL 散度： actor的动作上的差距，而不是它们参数上的差距。
+
+![image](https://user-images.githubusercontent.com/12492564/154100327-e0ec9e37-1578-441d-abb4-88615d212404.png)
+
+PPO的实现：它先初始化一个 policy 的参数θ0。然后在每一个迭代里面，你要用参数 θk， θk就是你在前一个训练的迭代得到的 actor 的参数，你用它去跟环境做互动，采样到一大堆状态-动作的对。
+然后你根据互动的结果，估测一下 A。然后你就使用 PPO 的优化的公式。但跟原来的 policy gradient 不一样，原来的 policy gradient 只能更新一次参数，更新完以后，你就要重新采样数据。但是现在不用，你拿  θk去跟环境做互动，采样到这组数据以后，你可以让 θ 更新很多次，想办法去最大化目标函数。这边 θ 更新很多次没有关系，因为我们已经有做重要性采样，所以这些经验，这些状态-动作的对是从θk
+采样出来的没有关系。θ 可以更新很多次，它跟θk变得不太一样也没有关系，你还是可以照样训练θ。
+
+![image](https://user-images.githubusercontent.com/12492564/154102497-18f3dd18-3854-4346-b0b7-3722a8cdfc4c.png)
+
+PPO 算法有两个主要的变种：PPO-Penalty 和 PPO-Clip。
+
+PPO-Penalty
+
+![image](https://user-images.githubusercontent.com/12492564/154103571-14c42ab4-f2b2-4d54-87e5-2f7bcad46349.png)
+
+在这个方法里面，你先设一个你可以接受的 KL 散度的最大值。假设优化完这个式子以后，你发现 KL 散度的项太大，那就代表说后面这个惩罚的项没有发挥作用，那就把 β 调大。
+另外，你设一个 KL 散度的最小值。如果优化完上面这个式子以后，你发现 KL 散度比最小值还要小，那代表后面这一项的效果太强了，你怕他只弄后面这一项，那 θ 跟 θk 
+都一样，这不是你要的，所以你要减少β。
+
+PPO-Clip
+
+![image](https://user-images.githubusercontent.com/12492564/154103979-21d70016-4980-4247-943a-e4484687c433.png)
+
+![image](https://user-images.githubusercontent.com/12492564/154104407-66b65630-f003-4ad7-8994-9056a3999783.png)
+
+
+keras实现ppo-clip：[https://keras.io/examples/rl/ppo_cartpole/](https://keras.io/examples/rl/ppo_cartpole/)
