@@ -122,6 +122,8 @@ PPO-Clip
 
 ![image](https://user-images.githubusercontent.com/12492564/154103979-21d70016-4980-4247-943a-e4484687c433.png)
 
+clip如下，也就是既不让它太大或者太小
+
 ![image](https://user-images.githubusercontent.com/12492564/154104407-66b65630-f003-4ad7-8994-9056a3999783.png)
 
 
