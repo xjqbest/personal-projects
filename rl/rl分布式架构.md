@@ -127,4 +127,12 @@ clip如下，也就是既不让它太大或者太小
 ![image](https://user-images.githubusercontent.com/12492564/154104407-66b65630-f003-4ad7-8994-9056a3999783.png)
 
 
-keras实现ppo-clip：[https://keras.io/examples/rl/ppo_cartpole/](https://keras.io/examples/rl/ppo_cartpole/)
+keras实现ppo-clip：采用了Actor-Critic结构
+
+[https://keras.io/examples/rl/ppo_cartpole/](https://keras.io/examples/rl/ppo_cartpole/)
+
+DPPO实现如下：
+
+![image](https://user-images.githubusercontent.com/12492564/154106740-af27b1e7-04f0-412f-87c5-3dbecd74be6a.png)
+
+![image](https://user-images.githubusercontent.com/12492564/154106778-b841c485-00ee-4d23-9327-44d799772a10.png)
