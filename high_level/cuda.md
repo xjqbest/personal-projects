@@ -1,8 +1,8 @@
 
 ### grid和block的配置
 
- - block大小是32的整数倍：sm上线程执行的基本单元是warp，大小为32.
- - block不大不小：小可以有更多的block数避免sm空闲，大可以提高吞吐。
+ - block大小是32的整数倍：sm上线程执行的基本单元是warp，大小为32.（因为warp大小是32，避免inactive thread浪费sm资源）
+ - block不大不小：小可以有更多的block数避免sm空闲，大可以提高吞吐。（）
  - 根据资源约束来调整：每个sm上的最大block/warp数、最大shared memory、寄存器数。
 
 ### [reduction](https://developer.download.nvidia.cn/compute/cuda/1.1-Beta/x86_website/projects/reduction/doc/reduction.pdf)
@@ -27,3 +27,12 @@
 
  - 尽量减少分支语句
  - unrolling loops: 减少指令；增加更多的独立操作。
+
+
+#### warp相关的优化
+
+ - 避免inactive的thread：如果block所含线程数目不是warp大小的整数倍，那么多出的那些thread所在的warp中，会剩余一些inactive的thread，即使这部分thread是inactive的，也会消耗SM资源，这点是编程时应避免的。
+ -  Warp Divergence：因为所有同一个warp中的thread必须执行相同的指令，那么如果这些线程在遇到控制流语句时，如果进入不同的分支，那么同一时刻除了正在执行的分支外，其余分支都被阻塞了，十分影响性能。为了获得最好的性能，就需要避免同一个warp存在不同的执行路径。
+ -  最大化active warp的数目：active warp可以被分为三类，SM中warp调度器每个cycle会挑选active warp送去执行，一个被选中的warp称为Selected warp，没被选中，但是已经做好准备被执行的称为Eligible warp，没准备好要被执行的称为Stalled warp。为了最大化GPU利用率，我们必须最大化active warp的数目。
+ -  Latency Hiding：指令从开始到结束消耗的clock cycle称为指令的latency。当每个cycle都有eligible warp被调度时，计算资源就会得到充分利用。
+ -  Bank Conflict：当多个地址请求落在同一个bank中就会发生bank conflict，从而导致请求多次执行。
