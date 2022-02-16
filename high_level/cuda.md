@@ -36,3 +36,16 @@
  -  最大化active warp的数目：active warp可以被分为三类，SM中warp调度器每个cycle会挑选active warp送去执行，一个被选中的warp称为Selected warp，没被选中，但是已经做好准备被执行的称为Eligible warp，没准备好要被执行的称为Stalled warp。为了最大化GPU利用率，我们必须最大化active warp的数目。
  -  Latency Hiding：指令从开始到结束消耗的clock cycle称为指令的latency。当每个cycle都有eligible warp被调度时，计算资源就会得到充分利用。
  -  Bank Conflict：当多个地址请求落在同一个bank中就会发生bank conflict，从而导致请求多次执行。
+
+
+### kernel性能调节
+
+Achieved Occupancy = 每个SM在每个cycle能够达到的最大active warp数目占总warp的比例。
+
+有更多的block，device一般会达到更多active warp，也就是更高的Occupancy。
+
+Global Load Throughput：高load throughput有可能是一种假象，如果需要的数据在memory中存储格式未对齐不连续，会导致许多额外的不必要的load操作。
+
+Global Memory Load Efficiency：是指我们确切需要的global load throughput与实际得到global load memory的比值。
+
+一般来讲，最佳配置既不是拥有最高achieved Occupancy也不是最高load throughput的。所以不存在唯一metric来优化计算性能，我么需要从众多metric中寻求一个平衡。
