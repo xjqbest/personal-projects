@@ -2,7 +2,7 @@
 ### grid和block的配置
 
  - block大小是32的整数倍：sm上线程执行的基本单元是warp，大小为32.（因为warp大小是32，避免inactive thread浪费sm资源）
- - block不大不小：小可以有更多的block数避免sm空闲，大可以提高吞吐。（）
+ - block不大不小：小可以有更多的block数避免sm空闲，大可以提高吞吐。
  - 根据资源约束来调整：每个sm上的最大block/warp数、最大shared memory、寄存器数。
 
 ### [reduction](https://developer.download.nvidia.cn/compute/cuda/1.1-Beta/x86_website/projects/reduction/doc/reduction.pdf)
